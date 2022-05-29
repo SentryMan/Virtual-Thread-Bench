@@ -10,6 +10,7 @@ import com.loom.loomy.model.Weather;
 
 import jdk.incubator.concurrent.StructuredTaskScope;
 
+// scope for getting the first result of same type
 public class WeatherScope implements AutoCloseable {
 
   private final StructuredTaskScope.ShutdownOnSuccess<Weather> scope =
@@ -37,9 +38,7 @@ public class WeatherScope implements AutoCloseable {
   }
 
   public Weather getWeather() throws ExecutionException {
-    if (!timeout) {
-      return scope.result();
-    }
+    if (!timeout) return scope.result();
     return Weather.UNKNOWN;
   }
 }
