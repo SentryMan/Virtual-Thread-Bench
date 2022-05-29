@@ -4,12 +4,14 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.springframework.stereotype.Service;
 
 import com.loom.loomy.LoomyApplication;
 import com.loom.loomy.model.Weather;
-import com.loom.loomy.scope.WeatherScope;
+
+import jdk.incubator.concurrent.StructuredTaskScope;
 
 @Service
 public class WeatherService {
@@ -17,7 +19,7 @@ public class WeatherService {
 
   public Weather readWeather() throws InterruptedException, ExecutionException {
 
-    try (var scope = new WeatherScope()) {
+    try (var scope = new StructuredTaskScope.ShutdownOnSuccess<Weather>()) {
 
       scope.fork(
           () -> {
@@ -35,9 +37,13 @@ public class WeatherService {
             return new Weather("WC", "Partly Cloudy");
           });
 
-      scope.joinUntil(Instant.now().plus(1000, LoomyApplication.CHRONO_UNIT));
+      scope.joinUntil(Instant.now().plus(999, LoomyApplication.CHRONO_UNIT));
 
-      return scope.getWeather();
+      // get first result
+      return scope.result();
+
+    } catch (final TimeoutException e) {
+      return Weather.UNKNOWN;
     }
   }
 }

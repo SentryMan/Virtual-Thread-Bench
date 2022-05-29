@@ -1,12 +1,16 @@
 package com.loom.loomy.controller;
 
+import java.util.concurrent.ExecutionException;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.loom.loomy.exception.TravelPageException;
 import com.loom.loomy.model.TravelPage;
-import com.loom.loomy.scope.TravelPageScope;
 import com.loom.loomy.service.QuoteService;
 import com.loom.loomy.service.WeatherService;
+
+import jdk.incubator.concurrent.StructuredTaskScope;
 
 @RestController
 public class Controller {
@@ -22,20 +26,19 @@ public class Controller {
 
   @GetMapping("/travelpage")
   TravelPage travel() throws InterruptedException {
-    TravelPage travelPage;
-    try (var scope = new TravelPageScope()) {
 
-      scope.fork(weatherService::readWeather);
-      scope.fork(quoter::readQuotation);
+    try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 
-      scope.join();
+      final var weatherFork = scope.fork(weatherService::readWeather);
+      final var quoteFork = scope.fork(quoter::readQuotation);
 
-      travelPage = scope.travelPage();
-    } catch (final InterruptedException e) {
+      scope.join().throwIfFailed();
+
+      return new TravelPage(quoteFork.resultNow(), weatherFork.resultNow());
+
+    } catch (final InterruptedException | ExecutionException e) {
       e.printStackTrace();
-      throw e;
+      throw new TravelPageException("Failed to get travel info", e);
     }
-
-    return travelPage;
   }
 }

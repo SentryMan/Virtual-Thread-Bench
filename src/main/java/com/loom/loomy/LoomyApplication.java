@@ -21,7 +21,7 @@ public class LoomyApplication {
 
   @Bean
   public WebServerFactoryCustomizer<ConfigurableJettyWebServerFactory>
-      tomcatProtocolHandlerCustomizer() {
+      jettyPoolCustomizer() {
     return server -> server.setThreadPool(new LoomThreadPool());
   }
 }

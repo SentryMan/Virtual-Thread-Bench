@@ -1,12 +1,8 @@
 package com.loom.loomy.exception;
 
-import java.util.Collection;
+public class TravelPageException extends RuntimeException {
 
-public class TravelPageException extends AbstractScopeException {
-
-  public TravelPageException(String string, Collection<Throwable> exceptions) {
+  public TravelPageException(String string, Throwable e) {
     super(string);
-
-    addSuppresed(exceptions);
   }
 }
