@@ -37,7 +37,7 @@ public class WeatherService {
             return new Weather("WC", "Partly Cloudy");
           });
 
-      scope.joinUntil(Instant.now().plus(999, LoomyApplication.CHRONO_UNIT));
+      scope.joinUntil(Instant.now().plus(600, LoomyApplication.CHRONO_UNIT));
 
       // get first result
       return scope.result();
