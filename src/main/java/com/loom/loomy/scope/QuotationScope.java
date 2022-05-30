@@ -5,7 +5,7 @@ import java.util.Comparator;
 import com.loom.loomy.exception.QuotationException;
 import com.loom.loomy.model.Quotation;
 
-public class QuotationScope extends ShutdownAfterCompletion<Quotation> {
+public class QuotationScope extends CollectorScope<Quotation> {
 
   public Quotation bestQuotation() {
     return results.stream()

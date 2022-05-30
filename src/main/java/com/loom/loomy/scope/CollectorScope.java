@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 
 import jdk.incubator.concurrent.StructuredTaskScope;
 
-public class ShutdownAfterCompletion<T> extends StructuredTaskScope<T> {
+public class CollectorScope<T> extends StructuredTaskScope<T> {
 
   protected final Queue<T> results = new ConcurrentLinkedQueue<>();
 

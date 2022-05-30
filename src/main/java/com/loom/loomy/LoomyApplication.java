@@ -8,7 +8,7 @@ import org.springframework.boot.web.embedded.jetty.ConfigurableJettyWebServerFac
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 
-import com.loom.loomy.server.LoomThreadPool;
+import com.loom.loomy.config.LoomThreadPool;
 
 @SpringBootApplication
 public class LoomyApplication {
@@ -20,8 +20,7 @@ public class LoomyApplication {
   }
 
   @Bean
-  public WebServerFactoryCustomizer<ConfigurableJettyWebServerFactory>
-      jettyPoolCustomizer() {
+  public WebServerFactoryCustomizer<ConfigurableJettyWebServerFactory> jettyPoolCustomizer() {
     return server -> server.setThreadPool(new LoomThreadPool());
   }
 }

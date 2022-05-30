@@ -1,4 +1,4 @@
-package com.loom.loomy.server;
+package com.loom.loomy.config;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
