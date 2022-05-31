@@ -2,6 +2,7 @@ package com.loom.loomy;
 
 import java.time.temporal.ChronoUnit;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.embedded.jetty.ConfigurableJettyWebServerFactory;
@@ -20,7 +21,14 @@ public class LoomyApplication {
   }
 
   @Bean
-  public WebServerFactoryCustomizer<ConfigurableJettyWebServerFactory> jettyPoolCustomizer() {
-    return server -> server.setThreadPool(new LoomThreadPool());
+  public WebServerFactoryCustomizer<ConfigurableJettyWebServerFactory> jettyPoolCustomizer(
+      @Value("${loom:true}") boolean loom) {
+
+    return loom
+        ? server -> {
+          System.out.println("Using Loom");
+          server.setThreadPool(new LoomThreadPool());
+        }
+        : server -> System.out.println("Not Using Loom");
   }
 }
