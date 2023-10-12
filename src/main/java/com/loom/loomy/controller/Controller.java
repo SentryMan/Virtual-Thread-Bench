@@ -1,6 +1,7 @@
 package com.loom.loomy.controller;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.StructuredTaskScope;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,8 +10,6 @@ import com.loom.loomy.exception.TravelPageException;
 import com.loom.loomy.model.TravelPage;
 import com.loom.loomy.service.QuoteService;
 import com.loom.loomy.service.WeatherService;
-
-import jdk.incubator.concurrent.StructuredTaskScope;
 
 @RestController
 public class Controller {
@@ -34,7 +33,7 @@ public class Controller {
 
       scope.join().throwIfFailed();
 
-      return new TravelPage(quoteFork.resultNow(), weatherFork.resultNow());
+      return new TravelPage(quoteFork.get(), weatherFork.get());
 
     } catch (final InterruptedException | ExecutionException e) {
       e.printStackTrace();

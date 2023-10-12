@@ -2,9 +2,7 @@ package com.loom.loomy.scope;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Future;
-
-import jdk.incubator.concurrent.StructuredTaskScope;
+import java.util.concurrent.StructuredTaskScope;
 
 public class CollectorScope<T> extends StructuredTaskScope<T> {
 
@@ -13,14 +11,11 @@ public class CollectorScope<T> extends StructuredTaskScope<T> {
   protected final Queue<Throwable> exceptions = new ConcurrentLinkedQueue<>();
 
   @Override
-  protected void handleComplete(Future<T> future) {
-    switch (future.state()) {
-      case RUNNING -> throw new IllegalStateException("Task is still running");
-      case SUCCESS -> results.add(future.resultNow());
-      case FAILED -> exceptions.add(future.exceptionNow());
-      case CANCELLED -> {
-        System.out.println("Cancelled");
-      }
+  protected void handleComplete(Subtask<? extends T> subtask) {
+    switch (subtask.state()) {
+      case UNAVAILABLE -> throw new IllegalStateException("Task is still running");
+      case SUCCESS -> results.add(subtask.get());
+      case FAILED -> exceptions.add(subtask.exception());
     }
   }
 

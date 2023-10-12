@@ -13,6 +13,7 @@ import com.loom.loomy.config.LoomThreadPool;
 
 @SpringBootApplication
 public class LoomyApplication {
+
   public static final ChronoUnit CHRONO_UNIT = ChronoUnit.MILLIS;
 
   public static void main(String[] args) {
