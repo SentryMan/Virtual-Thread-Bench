@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.StructuredTaskScope;
+import java.util.concurrent.StructuredTaskScope.ShutdownOnSuccess;
 import java.util.concurrent.TimeoutException;
 
 import org.springframework.stereotype.Service;
@@ -14,22 +15,25 @@ import com.loom.loomy.model.Weather;
 
 @Service
 public class WeatherService {
+
   final Random random = new Random();
 
   public Weather readWeather() throws InterruptedException, ExecutionException {
 
-    try (var scope = new StructuredTaskScope.ShutdownOnSuccess<Weather>()) {
+    try (ShutdownOnSuccess<Weather> scope = new StructuredTaskScope.ShutdownOnSuccess<>()) {
 
       scope.fork(
           () -> {
             Thread.sleep(Duration.of(random.nextInt(0, 1000), LoomyApplication.CHRONO_UNIT));
             return new Weather("WA", "Sunny");
           });
+
       scope.fork(
           () -> {
             Thread.sleep(Duration.of(random.nextInt(0, 1000), LoomyApplication.CHRONO_UNIT));
             return new Weather("WB", "Cloudy");
           });
+
       scope.fork(
           () -> {
             Thread.sleep(Duration.of(random.nextInt(0, 1000), LoomyApplication.CHRONO_UNIT));

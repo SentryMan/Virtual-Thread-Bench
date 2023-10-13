@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 public class LoomThreadPool implements ThreadPool {
+
   ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
   @Override
@@ -24,7 +25,6 @@ public class LoomThreadPool implements ThreadPool {
     return 1;
   }
 
-  // Nice
   @Override
   public boolean isLowOnThreads() {
     return false;

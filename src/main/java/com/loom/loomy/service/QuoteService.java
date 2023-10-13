@@ -25,11 +25,13 @@ public class QuoteService {
             Thread.sleep(Duration.of(random.nextInt(1, 1000), LoomyApplication.CHRONO_UNIT));
             return new Quotation("Agency A", random.nextInt(1, 1000));
           });
+
       scope.fork(
           () -> {
             Thread.sleep(Duration.of(random.nextInt(1, 1000), LoomyApplication.CHRONO_UNIT));
             return new Quotation("Agency B", random.nextInt(1, 1000));
           });
+
       scope.fork(
           () -> {
             Thread.sleep(Duration.of(random.nextInt(1, 1000), LoomyApplication.CHRONO_UNIT));
