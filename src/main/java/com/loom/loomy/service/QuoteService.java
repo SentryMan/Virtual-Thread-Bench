@@ -9,38 +9,26 @@ import org.springframework.stereotype.Service;
 import com.loom.loomy.LoomyApplication;
 import com.loom.loomy.exception.QuotationException;
 import com.loom.loomy.model.Quotation;
+import com.loom.loomy.model.Weather;
 import com.loom.loomy.scope.CollectorScope;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class QuoteService {
 
   final Random random = new Random();
 
-  public Quotation readQuotation() throws InterruptedException {
-
-    try (var scope = new CollectorScope<Quotation>()) {
-
-      scope.fork(
-          () -> {
-            Thread.sleep(Duration.of(random.nextInt(1, 1000), LoomyApplication.CHRONO_UNIT));
-            return new Quotation("Agency A", random.nextInt(1, 1000));
-          });
-      scope.fork(
-          () -> {
-            Thread.sleep(Duration.of(random.nextInt(1, 1000), LoomyApplication.CHRONO_UNIT));
-            return new Quotation("Agency B", random.nextInt(1, 1000));
-          });
-      scope.fork(
-          () -> {
-            Thread.sleep(Duration.of(random.nextInt(1, 1000), LoomyApplication.CHRONO_UNIT));
-            return new Quotation("Agency C", random.nextInt(1, 1000));
-          });
-
-      scope.join();
-
-      return scope.getResults().stream()
-          .min(Comparator.comparing(Quotation::quotation))
-          .orElseThrow(() -> new QuotationException("failed to get quotes", scope.getExceptions()));
-    }
+  public Mono<Quotation> readQuotation() throws InterruptedException {
+    return Flux.merge(
+            Mono.just(new Quotation("Agency A", random.nextInt(1, 1000)))
+                .delayElement(Duration.of(random.nextInt(0, 1000), LoomyApplication.CHRONO_UNIT)),
+            Mono.just(new Quotation("Agency B", random.nextInt(1, 1000)))
+                .delayElement(Duration.of(random.nextInt(0, 1000), LoomyApplication.CHRONO_UNIT)),
+            Mono.just(new Quotation("Agency C", random.nextInt(1, 1000)))
+                .delayElement(Duration.of(random.nextInt(0, 1000), LoomyApplication.CHRONO_UNIT)))
+        .sort(Comparator.comparing(Quotation::quotation))
+        .next();
   }
 }

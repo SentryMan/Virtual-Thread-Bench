@@ -12,37 +12,19 @@ import org.springframework.stereotype.Service;
 import com.loom.loomy.LoomyApplication;
 import com.loom.loomy.model.Weather;
 
+import reactor.core.publisher.Mono;
+
 @Service
 public class WeatherService {
   final Random random = new Random();
 
-  public Weather readWeather() throws InterruptedException, ExecutionException {
-
-    try (var scope = new StructuredTaskScope.ShutdownOnSuccess<Weather>()) {
-
-      scope.fork(
-          () -> {
-            Thread.sleep(Duration.of(random.nextInt(0, 1000), LoomyApplication.CHRONO_UNIT));
-            return new Weather("WA", "Sunny");
-          });
-      scope.fork(
-          () -> {
-            Thread.sleep(Duration.of(random.nextInt(0, 1000), LoomyApplication.CHRONO_UNIT));
-            return new Weather("WB", "Cloudy");
-          });
-      scope.fork(
-          () -> {
-            Thread.sleep(Duration.of(random.nextInt(0, 1000), LoomyApplication.CHRONO_UNIT));
-            return new Weather("WC", "Partly Cloudy");
-          });
-
-      scope.joinUntil(Instant.now().plus(600, LoomyApplication.CHRONO_UNIT));
-
-      // get first result
-      return scope.result();
-
-    } catch (final TimeoutException e) {
-      return Weather.UNKNOWN;
-    }
+  public Mono<Weather> readWeather() {
+    return Mono.firstWithSignal(
+        Mono.just(new Weather("WA", "Sunny"))
+            .delayElement(Duration.of(random.nextInt(0, 1000), LoomyApplication.CHRONO_UNIT)),
+        Mono.just(new Weather("WB", "Cloudy"))
+            .delayElement(Duration.of(random.nextInt(0, 1000), LoomyApplication.CHRONO_UNIT)),
+        Mono.just(new Weather("WC", "Partly Cloudy"))
+            .delayElement(Duration.of(random.nextInt(0, 1000), LoomyApplication.CHRONO_UNIT)));
   }
 }
