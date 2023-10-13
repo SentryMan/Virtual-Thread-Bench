@@ -8,6 +8,7 @@ Tests ran on
  - AMD Ryzen 5 3600
  - 16 GB RAM
  - Windows 10
+ - Java 21.0.0.35.1
 
 Running a 5-minute JMX test with 5000 threads gives these results. (Running longer seemed futile as regular threads were clearly losing by every metric.)
 
