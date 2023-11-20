@@ -4,7 +4,7 @@ Test repo that sees how the new loom/structured concurrency stuff compares to re
 
  # JMX Results
 
-Running a 5-minute JMX test with 5000 threads gives these results. (Running longer seemed futile as regular threads were clearly losing by every metric.)
+Running a 30-minute JMX test with 4000 threads gives these results. (Running longer seemed futile as regular threads were clearly losing by every metric.)
 
 <img src="summary.PNG">
 
