@@ -13,7 +13,7 @@ Running a 30-minute JMX test with 4000 threads gives these results. (Running lon
 
 With a mere change in a config param, we change the server to execute requests on a virtual thread executor
 
-https://github.com/SentryMan/Virtual-Thread-Bench/blob/6a56e7953dfdef23fdfbf90739bcb4de934b825e/src/main/java/com/loom/loomy/LoomyApplication.java#L24-L34
+https://github.com/SentryMan/Virtual-Thread-Bench/blob/6ea8ace8f609533e84611d640232c00cdf1b91d9/src/main/resources/application.properties#L1
 
 ### Response Time Graph with virtual thread pool
 <img src="Response Time Graph VT.png" width="720">
